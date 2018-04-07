@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>图片旋转</title>
+	<style>
+		* {margin: 0;padding: 0;}
+		ul {list-style: none;}
+		html, body {height: 100%;background: #000;overflow: hidden;}
+		#box {display: flex;display: -webkit-flex;height: 100%;perspective: 800px;}
+		#box ul {position: relative;width: 133px;height: 200px;margin: auto;transform-style: preserve-3d;transform: rotateX(-20deg);}
+		#box ul li:not(:last-child) {position: absolute;top: 0;left: 0;-webkit-box-reflect: below 0px -webkit-linear-gradient(top, rgba(0,0,0,0.02), rgba(0,0,0,0.8));}
+		#box .circle {position: absolute;left: calc(50% - 600px/2);top: calc(50% - 600px/2);width: 600px;height: 600px;background: rgba(255,255,255,.1);border-radius: 50%;transform: rotateX(90deg) translateZ(-100px);}
+	</style>
+</head>
+<body>
+	<div id="box">
+		<ul>
+			<li><img src="images/01.jpg" alt=""></li>
+			<li><img src="images/02.jpg" alt=""></li>
+			<li><img src="images/03.jpg" alt=""></li>
+			<li><img src="images/04.jpg" alt=""></li>
+			<li><img src="images/05.jpg" alt=""></li>
+			<li><img src="images/06.jpg" alt=""></li>
+			<li><img src="images/07.jpg" alt=""></li>
+			<li><img src="images/08.jpg" alt=""></li>
+			<li><img src="images/09.jpg" alt=""></li>
+			<li><img src="images/010.jpg" alt=""></li>
+			<li class="circle"></li>
+		</ul>
+	</div>
+	<script>
+		window.onload = function() {
+			var oUl = document.getElementsByTagName('ul')[0],
+				aLi = oUl.getElementsByTagName('li');
+			for (var i = 0; i < aLi.length - 1; i++) {
+				aLi[i].style.transform = 'rotateY(' + 360 / (aLi.length - 1) * i + 'deg) translateZ(250px)'; 
+				aLi[i].style.transition = 'transform 1s ' + (aLi.length - 1 - i ) * 0.1 + 's';
+			}
+			var rotX = -20,
+				rotY = 0,
+				diffX = 0,
+				diffY = 0,
+				timer;
+			document.onmousedown = function(ev) {
+				ev = ev || window.event;
+				var curX = ev.clientX,
+					curY = ev.clientY,
+					nowX,
+					nowY;
+				document.onmousemove = function(ev) {
+					nowX = ev.clientX;
+					nowY = ev.clientY;
+					diffX = nowX - curX;
+					diffY = nowY - curY;
+					rotX -= diffY / 10;
+					rotY += diffX / 5;
+					oUl.style.transform = 'rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg)';
+					curX = nowX;
+					curY = nowY;
+				}
+				document.onmouseup = function(ev) {
+					this.onmousemove = this.onmouseup = null;
+					timer = setInterval(function() {
+						diffY *= 0.95;
+						diffX *= 0.95;
+	                    rotX -= diffY / 10;
+	                    rotY += diffX / 5;
+	                    oUl.style.transform = 'rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg)';
+	                    if (Math.abs(diffY) < 0.4 && Math.abs(diffX) < 0.4) {
+	                    	clearInterval(timer);
+	                    }
+					}, 13)
+					
+				}
+				ev.preventDefault();
+			}
+		}
+	</script>
+</body>
+</html>
